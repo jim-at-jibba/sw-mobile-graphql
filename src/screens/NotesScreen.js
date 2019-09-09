@@ -38,7 +38,6 @@ const NotesScreen = ({ navigation }) => (
     </ScrollView>
     <FAB
       style={styles.fab}
-      small
       icon="add"
       onPress={() => navigation.navigate('NoteCreate')}
     />
