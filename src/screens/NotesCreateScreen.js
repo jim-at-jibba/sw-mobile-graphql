@@ -22,13 +22,16 @@ const NoteCreateScreen = ({ navigation }) => {
 
   React.useEffect(() => {
     if (data) {
-      console.log('DATA', data);
       setAlertType('success');
       setAlertMessage('Create note success');
       setAlertOpen(true);
       navigation.goBack();
     } else if (error) {
       console.log('ERR', error);
+      setAlertType('error');
+      setAlertMessage('Cannot create note');
+      setAlertOpen(true);
+      navigation.goBack();
     }
   });
   const { setAlertType, setAlertOpen, setAlertMessage } = React.useContext(

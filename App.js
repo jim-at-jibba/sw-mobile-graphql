@@ -7,6 +7,7 @@ import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from 'react-apollo';
 import { device, func, gStyle } from './src/constants';
+import ContextProvider from './src/globalState/state';
 // navigation switch
 import AppSwitchNav from './src/navigation/AppSwitchNav';
 
