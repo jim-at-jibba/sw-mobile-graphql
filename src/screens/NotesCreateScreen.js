@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { Surface, TextInput, Button } from 'react-native-paper';
 import { Formik } from 'formik';
-import { v4 as uuid } from 'uuid';
-import moment from 'moment';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { gStyle } from '../constants';
 import { GET_NOTES } from './NotesScreen';
+import { AlertContext } from '../globalState';
 
 const ADD_NOTE = gql`
   mutation($title: String!, $note: String!) {
@@ -24,11 +23,17 @@ const NoteCreateScreen = ({ navigation }) => {
   React.useEffect(() => {
     if (data) {
       console.log('DATA', data);
+      setAlertType('success');
+      setAlertMessage('Create note success');
+      setAlertOpen(true);
       navigation.goBack();
     } else if (error) {
       console.log('ERR', error);
     }
   });
+  const { setAlertType, setAlertOpen, setAlertMessage } = React.useContext(
+    AlertContext
+  );
   return (
     <SafeAreaView style={gStyle.container}>
       <ScrollView contentContainerStyle={gStyle.contentContainer}>

@@ -35,7 +35,9 @@ const App = () => {
       <StatusBar barStyle={device.iOS ? 'dark-content' : 'light-content'} />
       <PaperProvider>
         <ApolloProvider client={client}>
-          <AppSwitchNav />
+          <ContextProvider>
+            <AppSwitchNav />
+          </ContextProvider>
         </ApolloProvider>
       </PaperProvider>
     </View>
