@@ -34,8 +34,8 @@ const NoteCreateScreen = ({ navigation }) => {
                   [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
                   { cancelable: false }
                 );
-                setAlertType('error');
-                setAlertMessage('Create film error');
+                setAlertType('success');
+                setAlertMessage('Create note success');
                 setAlertOpen(true);
                 navigation.goBack();
               }}
