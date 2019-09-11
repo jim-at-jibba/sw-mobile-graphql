@@ -6,9 +6,29 @@ import { Surface, TextInput, Button } from 'react-native-paper';
 import { Formik } from 'formik';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 import { gStyle } from '../constants';
+import { GET_NOTES } from './NotesScreen';
 
+const ADD_NOTE = gql`
+  mutation($title: String!, $note: String!) {
+    createNotes(data: { title: $title, note: $note, status: PUBLISHED }) {
+      id
+    }
+  }
+`;
 const NoteCreateScreen = ({ navigation }) => {
+  const [addNote, { data, error }] = useMutation(ADD_NOTE);
+
+  React.useEffect(() => {
+    if (data) {
+      console.log('DATA', data);
+      navigation.goBack();
+    } else if (error) {
+      console.log('ERR', error);
+    }
+  });
   return (
     <SafeAreaView style={gStyle.container}>
       <ScrollView contentContainerStyle={gStyle.contentContainer}>
@@ -17,20 +37,10 @@ const NoteCreateScreen = ({ navigation }) => {
             <Formik
               initialValues={{ note: '', title: '' }}
               onSubmit={({ note, title }) => {
-                const input = {
-                  id: uuid(),
-                  title,
-                  note,
-                  createdAt: moment().toISOString()
-                };
-                console.log(input);
-                Alert.alert(
-                  'Our note',
-                  JSON.stringify(input),
-                  [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
-                  { cancelable: false }
-                );
-                navigation.goBack();
+                addNote({
+                  variables: { title, note },
+                  refetchQueries: () => [{ query: GET_NOTES }]
+                });
               }}
             >
               {({ values, handleSubmit, handleChange }) => {

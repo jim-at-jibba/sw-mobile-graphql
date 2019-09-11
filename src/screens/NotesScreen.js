@@ -2,61 +2,64 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
-import { Surface, FAB, List } from 'react-native-paper';
+import { Text, Surface, FAB, List } from 'react-native-paper';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { gStyle } from '../constants';
 
-const notes = [
-  {
-    id: '123456',
-    title: 'Note 1',
-    content: 'A very interesting note'
-  },
-  {
-    id: '23456',
-    title: 'Note 2',
-    content: 'Another very interesting note'
-  }
-];
-
-const GET_NOTES = gql`
+export const GET_NOTES = gql`
   query {
     noteses {
       id
       title
-      note
     }
   }
 `;
 
 const NotesScreen = ({ navigation }) => {
   const { loading, error, data } = useQuery(GET_NOTES);
-  if (loading) {
-    console.log('LOADING');
-  } else {
-    console.log('DATA', data, error);
-  }
+  const [notes, setNotes] = React.useState([]);
+
+  React.useEffect(() => {
+    if (data && data.noteses) {
+      setNotes(data.noteses);
+    } else if (error) {
+      console.log('Error', error);
+      // Add error handling here
+    }
+  }, [data, error]);
 
   return (
     <SafeAreaView style={gStyle.container}>
       <ScrollView contentContainerStyle={gStyle.contentContainer}>
-        <View style={{ flex: 1, height: '100%', width: '100%' }}>
-          {data &&
-            data.noteses &&
-            data.noteses.map(note => {
-              return (
-                <Surface key={note.id} style={styles.surface}>
-                  <List.Item
-                    title={note.title}
-                    description={note.content}
-                    onPress={() => navigation.navigate('Note', { id: '123' })}
-                    left={props => <List.Icon {...props} icon="create" />}
-                  />
-                </Surface>
-              );
-            })}
-        </View>
+        {loading ? (
+          <View>
+            <Text>Loading</Text>
+          </View>
+        ) : (
+          <View style={{ flex: 1, height: '100%', width: '100%' }}>
+            {notes.length > 0 ? (
+              notes.map(note => {
+                return (
+                  <Surface key={note.id} style={styles.surface}>
+                    <List.Item
+                      title={note.title}
+                      description={note.content}
+                      onPress={() =>
+                        navigation.navigate('Note', { id: note.id })
+                      }
+                      left={props => <List.Icon {...props} icon="create" />}
+                    />
+                  </Surface>
+                );
+              })
+            ) : (
+              <View>
+                <Text>No notes</Text>
+              </View>
+            )}
+          </View>
+        )}
       </ScrollView>
       <FAB
         style={styles.fab}
