@@ -3,6 +3,7 @@ import { StatusBar, View } from 'react-native';
 import { AppLoading, ScreenOrientation } from 'expo';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { device, func, gStyle } from './src/constants';
+import ContextProvider from './src/globalState/state';
 // import { ApolloClient } from 'apollo-client';
 // import { HttpLink } from 'apollo-link-http';
 // import { InMemoryCache } from 'apollo-cache-inmemory';
@@ -35,7 +36,9 @@ const App = () => {
     <View style={gStyle.container}>
       <StatusBar barStyle={device.iOS ? 'dark-content' : 'light-content'} />
       <PaperProvider>
-        <AppSwitchNav />
+        <ContextProvider>
+          <AppSwitchNav />
+        </ContextProvider>
       </PaperProvider>
     </View>
   );

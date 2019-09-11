@@ -7,8 +7,12 @@ import { Formik } from 'formik';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment';
 import { gStyle } from '../constants';
+import { AlertContext } from '../globalState';
 
 const NoteCreateScreen = ({ navigation }) => {
+  const { setAlertType, setAlertOpen, setAlertMessage } = React.useContext(
+    AlertContext
+  );
   return (
     <SafeAreaView style={gStyle.container}>
       <ScrollView contentContainerStyle={gStyle.contentContainer}>
@@ -30,6 +34,9 @@ const NoteCreateScreen = ({ navigation }) => {
                   [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
                   { cancelable: false }
                 );
+                setAlertType('error');
+                setAlertMessage('Create film error');
+                setAlertOpen(true);
                 navigation.goBack();
               }}
             >

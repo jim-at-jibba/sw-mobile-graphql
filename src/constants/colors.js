@@ -14,5 +14,9 @@ export default {
   blue: '#0197f6',
   brown: '#bcab79',
   grey: '#d0ccd0',
-  red: '#d7263d'
+  red: '#d7263d',
+
+  success: 'green',
+  error: 'red',
+  info: 'yellow'
 };
