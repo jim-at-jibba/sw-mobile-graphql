@@ -18,5 +18,5 @@ export default {
 
   success: 'green',
   error: 'red',
-  info: 'yellow'
+  info: 'purple'
 };

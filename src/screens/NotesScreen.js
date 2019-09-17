@@ -6,15 +6,15 @@ import { Surface, FAB, List, Text } from 'react-native-paper';
 import gql from 'graphql-tag';
 import { useQuery } from 'react-apollo-hooks';
 import { gStyle } from '../constants';
-import { listNotess } from '../graphql/queries';
+import { listNotes } from '../graphql/queries';
 
 const NotesScreen = ({ navigation }) => {
   const [notes, setNotes] = React.useState([]);
-  const { data, error, loading, refetch } = useQuery(gql(listNotess));
+  const { data, error, loading, refetch } = useQuery(gql(listNotes));
 
   React.useEffect(() => {
-    if (data && data.listNotess) {
-      setNotes(data.listNotess.items);
+    if (data && data.listNotes) {
+      setNotes(data.listNotes.items);
     }
   }, [data, error]);
 
@@ -31,7 +31,7 @@ const NotesScreen = ({ navigation }) => {
                   <List.Item
                     title={note.title}
                     description={note.content}
-                    onPress={() => navigation.navigate('Note', { id: '123' })}
+                    onPress={() => navigation.navigate('Note', { id: note.id })}
                     left={props => <List.Icon {...props} icon="create" />}
                   />
                 </Surface>

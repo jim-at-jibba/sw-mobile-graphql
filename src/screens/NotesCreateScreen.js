@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { Surface, TextInput, Button } from 'react-native-paper';
 import { Formik } from 'formik';
@@ -10,14 +10,12 @@ import { useMutation } from 'react-apollo-hooks';
 import gql from 'graphql-tag';
 import { gStyle } from '../constants';
 import { AlertContext } from '../globalState';
-import { createNotes } from '../graphql/mutations';
+import { createNote } from '../graphql/mutations';
 
 const NoteCreateScreen = ({ navigation }) => {
-  const { setAlertType, setAlertOpen, setAlertMessage } = React.useContext(
-    AlertContext
-  );
+  const { dispatchAlert } = React.useContext(AlertContext);
 
-  const createNote = useMutation(gql(createNotes));
+  const createNoteMutation = useMutation(gql(createNote));
   return (
     <SafeAreaView style={gStyle.container}>
       <ScrollView contentContainerStyle={gStyle.contentContainer}>
@@ -32,15 +30,25 @@ const NoteCreateScreen = ({ navigation }) => {
                   note,
                   createdAt: moment().toISOString()
                 };
-                createNote({
+                createNoteMutation({
                   variables: {
                     input
                   },
                   update: (_, { data, error }) => {
                     if (error) {
+                      dispatchAlert({
+                        type: 'open',
+                        alertType: 'error',
+                        message: 'Error creating note'
+                      });
                       console.log('Error', error);
                     } else {
                       console.log('DATA', data);
+                      dispatchAlert({
+                        type: 'open',
+                        alertType: 'success',
+                        message: 'Note created'
+                      });
                       navigation.state.params.refetch();
                       navigation.goBack();
                     }

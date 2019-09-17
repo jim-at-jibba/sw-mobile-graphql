@@ -3,36 +3,49 @@ import PropTypes from 'prop-types';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { Title, Paragraph, Surface, FAB, Caption } from 'react-native-paper';
+import { useQuery } from 'react-apollo-hooks';
+import gql from 'graphql-tag';
 import { gStyle } from '../constants';
+import { getNote } from '../graphql/queries';
+import { AlertContext } from '../globalState';
 
-const notes = [
-  {
-    id: '123456',
-    title: 'Note 1',
-    content: 'A very interesting note'
-  },
-  {
-    id: '23456',
-    title: 'Note 2',
-    content: 'Another very interesting note'
-  }
-];
+const NoteScreen = ({ navigation }) => {
+  const { dispatchAlert } = React.useContext(AlertContext);
+  const [note, setNote] = React.useState(null);
+  const { data, loading, error } = useQuery(gql(getNote), {
+    variables: { id: navigation.state.params.id }
+  });
 
-const NoteScreen = ({ navigation }) => (
-  <SafeAreaView style={gStyle.container}>
-    <ScrollView contentContainerStyle={gStyle.contentContainer}>
-      <View style={{ flex: 1, height: '100%', width: '100%' }}>
-        <Surface style={styles.surface}>
-          <View style={styles.textWrapper}>
-            <Title>A Title</Title>
-            <Caption>Created: 10/10/10</Caption>
-            <Paragraph>This is a note</Paragraph>
-          </View>
-        </Surface>
-      </View>
-    </ScrollView>
-  </SafeAreaView>
-);
+  React.useEffect(() => {
+    if (data && data.getNote) {
+      setNote(data.getNote);
+    } else if (error) {
+      dispatchAlert({
+        type: 'open',
+        alertType: 'error',
+        message: 'Error creating note'
+      });
+    }
+  }, [data, error]);
+
+  return (
+    <SafeAreaView style={gStyle.container}>
+      <ScrollView contentContainerStyle={gStyle.contentContainer}>
+        <View style={{ flex: 1, height: '100%', width: '100%' }}>
+          {note && (
+            <Surface style={styles.surface}>
+              <View style={styles.textWrapper}>
+                <Title>{note.title}</Title>
+                <Caption>Created: {note.createdAt}</Caption>
+                <Paragraph>{note.note}</Paragraph>
+              </View>
+            </Surface>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 NoteScreen.navigationOptions = {
   title: 'Note'

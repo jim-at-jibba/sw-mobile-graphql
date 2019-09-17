@@ -10,7 +10,7 @@ const SnackBar = () => {
   });
 
   React.useEffect(() => {
-    switch (alertState.type) {
+    switch (alertState.alertType) {
       case 'info':
         setAlertStyle({
           backgroundColor: colors.success
