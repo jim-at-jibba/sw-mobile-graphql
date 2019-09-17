@@ -1,23 +1,41 @@
 import * as React from 'react';
 
+const initialState = {
+  type: 'close',
+  open: false,
+  alertType: 'info',
+  message: ''
+};
+
 export const AlertContext = React.createContext({});
 
-export function AlertProvider({ children }) {
-  const [isAlertOpen, setAlertOpen] = React.useState(false);
-  const [alertType, setAlertType] = React.useState('info');
-  const [alertMessage, setAlertMessage] = React.useState('');
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'close':
+      return {
+        ...initialState
+      };
+    case 'open':
+      return {
+        open: true,
+        alertType: action.alertType,
+        message: action.message
+      };
+    default:
+      throw new Error();
+  }
+};
+
+export const AlertProvider = ({ children }) => {
+  const [alertState, dispatchAlert] = React.useReducer(reducer, initialState);
   return (
     <AlertContext.Provider
       value={{
-        isAlertOpen,
-        setAlertOpen,
-        alertType,
-        setAlertType,
-        alertMessage,
-        setAlertMessage
+        alertState,
+        dispatchAlert
       }}
     >
       {children}
     </AlertContext.Provider>
   );
-}
+};

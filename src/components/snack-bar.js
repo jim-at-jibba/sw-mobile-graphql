@@ -4,18 +4,13 @@ import { AlertContext } from '../globalState';
 import { colors } from '../constants';
 
 const SnackBar = () => {
-  const {
-    setAlertOpen,
-    isAlertOpen,
-    alertType,
-    alertMessage
-  } = React.useContext(AlertContext);
+  const { alertState, dispatchAlert } = React.useContext(AlertContext);
   const [alertSyle, setAlertStyle] = React.useState({
     backgroundColor: colors.info
   });
 
   React.useEffect(() => {
-    switch (alertType) {
+    switch (alertState.type) {
       case 'info':
         setAlertStyle({
           backgroundColor: colors.success
@@ -36,17 +31,17 @@ const SnackBar = () => {
           backgroundColor: colors.info
         });
     }
-  }, [alertType]);
+  }, [alertState]);
 
   const closeMe = () => {
-    setAlertOpen(false);
+    dispatchAlert({ type: 'close' });
   };
   return (
     <>
-      {typeof isAlertOpen === 'boolean' && (
+      {typeof alertState.open === 'boolean' && (
         <Snackbar
           style={alertSyle}
-          visible={isAlertOpen}
+          visible={alertState.open}
           onDismiss={() => closeMe()}
           action={{
             label: 'Undo',
@@ -56,7 +51,7 @@ const SnackBar = () => {
             }
           }}
         >
-          {alertMessage}
+          {alertState.message}
         </Snackbar>
       )}
     </>

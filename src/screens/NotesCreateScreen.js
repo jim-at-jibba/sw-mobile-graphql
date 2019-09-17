@@ -6,13 +6,18 @@ import { Surface, TextInput, Button } from 'react-native-paper';
 import { Formik } from 'formik';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment';
+import { useMutation } from 'react-apollo-hooks';
+import gql from 'graphql-tag';
 import { gStyle } from '../constants';
 import { AlertContext } from '../globalState';
+import { createNotes } from '../graphql/mutations';
 
 const NoteCreateScreen = ({ navigation }) => {
   const { setAlertType, setAlertOpen, setAlertMessage } = React.useContext(
     AlertContext
   );
+
+  const createNote = useMutation(gql(createNotes));
   return (
     <SafeAreaView style={gStyle.container}>
       <ScrollView contentContainerStyle={gStyle.contentContainer}>
@@ -27,17 +32,20 @@ const NoteCreateScreen = ({ navigation }) => {
                   note,
                   createdAt: moment().toISOString()
                 };
-                console.log(input);
-                Alert.alert(
-                  'Our note',
-                  JSON.stringify(input),
-                  [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
-                  { cancelable: false }
-                );
-                setAlertType('success');
-                setAlertMessage('Create note success');
-                setAlertOpen(true);
-                navigation.goBack();
+                createNote({
+                  variables: {
+                    input
+                  },
+                  update: (_, { data, error }) => {
+                    if (error) {
+                      console.log('Error', error);
+                    } else {
+                      console.log('DATA', data);
+                      navigation.state.params.refetch();
+                      navigation.goBack();
+                    }
+                  }
+                });
               }}
             >
               {({ values, handleSubmit, handleChange }) => {
